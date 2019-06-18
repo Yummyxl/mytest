@@ -53,6 +53,7 @@ public class GrpcChannelPool {
             case SHUTDOWN:
                 return ConnectivityState.SHUTDOWN;
             case READY:
+            case IDLE:
                 return ConnectivityState.READY;
             default:
                 return ConnectivityState.IDLE;
