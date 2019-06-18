@@ -42,7 +42,6 @@ public class GrpcChannelPool {
 
     protected MyConnectivityState tryReadyCheck(ManagedChannel channel) {
         ConnectivityState states = channel.getState(true);
-        System.out.println(states);
         switch (states) {
             case READY:
             case IDLE:
@@ -73,6 +72,8 @@ public class GrpcChannelPool {
                     grpcChannel = new GrpcChannel(this);
                     grpcChannels.add(grpcChannel);
                     currentCount++;
+                } else {
+                    grpcChannel = getFromGrpcChannelsWithOutLock();
                 }
             } finally {
                 lock.writeLock().unlock();
@@ -101,6 +102,10 @@ public class GrpcChannelPool {
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    private GrpcChannel getFromGrpcChannelsWithOutLock() {
+        return grpcChannels.get(ThreadLocalRandom.current().nextInt(grpcChannels.size()) & grpcChannels.size());
     }
 
     void shutDownGrpcChannel(GrpcChannel grpcChannel) {
