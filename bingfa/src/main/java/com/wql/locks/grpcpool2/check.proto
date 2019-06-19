@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "grpc.health.v1";
+option java_outer_classname = "HealthCheckService";
+option objc_class_prefix = "HAOKE";
+
+package grpc;
+
+message HealthCheckRequest {
+  string service = 1;
+}
+
+message HealthCheckResponse {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+  }
+  ServingStatus status = 1;
+}
+
+//连接校验
+//返回为字符串"ServingStatus 1"，表示连接校验成功，其他表示失败 异常表示失败
+//服务端需要实现该方法
+service Health {
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+}
