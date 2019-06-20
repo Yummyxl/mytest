@@ -1,9 +1,9 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "grpc.health.v1";
-option java_outer_classname = "HealthCheckService";
-option objc_class_prefix = "HAOKE";
+option java_package = "com.wql.locks.grpcpool2";
+option java_outer_classname = "HealthCheck";
+option objc_class_prefix = "grpcpool2";
 
 package grpc;
 

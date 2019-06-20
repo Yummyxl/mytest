@@ -60,7 +60,9 @@ public class GrpcChannel {
     }
 
     void heartBeat() {
-        switch (grpcChannelPool.tryReadyCheck(channel)) {
+        MyConnectivityState myConnectivityState = grpcChannelPool.tryReadyCheck(channel);
+        logger.debug("健康检测结果为： " + myConnectivityState);
+        switch (myConnectivityState) {
             case OK:
                 ok();
                 break;
@@ -89,6 +91,7 @@ public class GrpcChannel {
         lock.lock();
         try {
             channel.shutdownNow();
+            channel = null;
             state = MyConnectivityState.DOWN;
             grpcChannelPool.shutDownGrpcChannel(this);
         } finally {
@@ -101,6 +104,7 @@ public class GrpcChannel {
         try {
             this.state = MyConnectivityState.CANCEL;
             retryCount++;
+            logger.debug(retryCount + "次检测失败");
             if (expire < System.currentTimeMillis() || retryCount > grpcChannelPool.getRetry()) {
                 shutDown();
                 return;
