@@ -38,7 +38,11 @@ public class ThreadExecutionQuestion {
         while (thread.isAlive()) {
             synchronized(thread) {
                 try {
-                    thread.wait(); //到底是谁通知了 Thread -》 notify
+                    thread.wait(); //到底是谁通知了 Thread -》 notify  在线程执行结束的时候，会唤醒所有持有此线程对象的线程
+                    // 首先join() 是一个synchronized方法， 里面调用了wait()，这个过程的目的是让持有这个同步锁的线程进入等待，那么谁持有了这个同步锁呢？
+                    // 答案是主线程，因为主线程调用了threadA.join()方法，相当于在threadA.join()代码这块写了一个同步代码块，谁去执行了这段代码呢，是主线程，
+                    // 所以主线程被wait()了。然后在子线程threadA执行完毕之后，JVM会调用lock.notify_all(thread);唤醒持有threadA这个对象锁的线程，也就是主线程，会继续执行。
+
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
